@@ -110,22 +110,6 @@ class LogisticRegression(object):
         # i.e., the mean log-likelihood across the minibatch.
         return -T.mean(T.log(self.p_y_given_x)[T.arange(y.shape[0]), y])
 
-    def cross_entropy(self,y):
-        """ Returns the cross entropy error values
-        
-        :type y: theano.tensor.TensorType
-        :param y: corresponds to a vector that gives for each example the
-                  correct label
-
-        """
-        
-        err_fn = T.log(self.p_y_given_x)[T.arange(y.shape[0]), y] + T.log(1-self.p_y_given_x)[T.arange(y.shape[0]), y]
-
-        return -T.mean(err_fn)
-#        return -T.mean( (T.log(self.p_y_given_x)[T.arange(y.shape[0]), y]) + T.log(1-self.p_y_given_x)( [T.arange(y.shape[0]), 1-y])  )
-
-
-
 
     def errors(self, y):
         """Return a float representing the number of errors in the minibatch
@@ -280,11 +264,6 @@ class MLP(object):
         # logistic regression layer
         self.negative_log_likelihood = self.logRegressionLayer.negative_log_likelihood
 
-        # Cross entropy error of the MLP is given by the cross entropy
-        # error of the output of the model, computed in the logistic 
-        # regression layer
-        self.cross_entropy = self.logRegressionLayer.cross_entropy
-
 
         # same holds for the function computing the number of errors
         self.errors = self.logRegressionLayer.errors
@@ -413,10 +392,10 @@ def test_mlp(learning_rate=0.05, L1_reg=0.00, L2_reg=0.000, n_epochs=10,
     # the cost we minimize during training is the negative log likelihood of
     # the model plus the regularization terms (L1 and L2); cost is expressed
     # here symbolically
-    #cost = classifier.negative_log_likelihood(y) \
+    cost = classifier.negative_log_likelihood(y) 
     #     + L1_reg * classifier.L1 \
     #     + L2_reg * classifier.L2_sqr
-    cost = classifier.cross_entropy(y)
+
 
     # compiling a Theano function that computes the mistakes that are made
     # by the model on a minibatch
