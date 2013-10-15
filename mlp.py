@@ -238,25 +238,32 @@ class MLP(object):
         # translate into a TanhLayer connected to the LogisticRegression
         # layer; this can be replaced by a SigmoidalLayer, or a layer
         # implementing any other nonlinearity
-        self.hiddenLayer = HiddenLayer(rng=rng, input=input,
+        self.hiddenLayer1 = HiddenLayer(rng=rng, input=input,
                                        n_in=n_in, n_out=n_hidden,
                                        activation=T.tanh)
+
+        self.hiddenLayer2 = HiddenLayer(rng=rng, input=self.hiddenLayer1.output,
+                                        n_in=n_hidden, n_out=n_hidden,
+                                        activation=T.tanh)
 
         # The logistic regression layer gets as input the hidden units
         # of the hidden layer
         self.logRegressionLayer = LogisticRegression(
-            input=self.hiddenLayer.output,
+            input=self.hiddenLayer2.output,
             n_in=n_hidden,
             n_out=n_out)
 
+
+        # Technically I should modify this code as well but since I don't use regularization, I'll put it off for later. - Prasanna
+
         # L1 norm ; one regularization option is to enforce L1 norm to
         # be small
-        self.L1 = abs(self.hiddenLayer.W).sum() \
+        self.L1 = abs(self.hiddenLayer1.W).sum() \
                 + abs(self.logRegressionLayer.W).sum()
 
         # square of L2 norm ; one regularization option is to enforce
         # square of L2 norm to be small
-        self.L2_sqr = (self.hiddenLayer.W ** 2).sum() \
+        self.L2_sqr = (self.hiddenLayer1.W ** 2).sum() \
                     + (self.logRegressionLayer.W ** 2).sum()
 
         # negative log likelihood of the MLP is given by the negative
@@ -270,7 +277,7 @@ class MLP(object):
 
         # the parameters of the model are the parameters of the two layer it is
         # made out of
-        self.params = self.hiddenLayer.params + self.logRegressionLayer.params
+        self.params = self.hiddenLayer1.params + self.hiddenLayer2.params + self.logRegressionLayer.params
 
 
 def load_data():
@@ -307,11 +314,11 @@ def load_data():
         return shared_x, T.cast(shared_y, 'int32')
 
     # Let's split the training data into a training set and a validation set
-    X_validset = numpy.matrix.transpose(data.root.X_train[:,59500:])
-    y_validset = numpy.matrix.transpose(data.root.y_train[:,59500:])
+    X_validset = numpy.matrix.transpose(data.root.X_train[:,55000:])
+    y_validset = numpy.matrix.transpose(data.root.y_train[:,55000:])
 
-    X_trainset = numpy.matrix.transpose(data.root.X_train[:,:59499])
-    y_trainset = numpy.matrix.transpose(data.root.y_train[:,:59499])
+    X_trainset = numpy.matrix.transpose(data.root.X_train[:,:54999])
+    y_trainset = numpy.matrix.transpose(data.root.y_train[:,:54999])
 
     X_testset = numpy.matrix.transpose(data.root.X_test[:,:])
     y_testset = numpy.matrix.transpose(data.root.y_test[:,:])
