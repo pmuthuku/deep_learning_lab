@@ -350,8 +350,19 @@ def load_data():
     return rval
 
 
+# This function is used to randomly permute two arbitrary arrays -Prasanna
+# Ended up not needing this -Prasanna
+# def shuffle_in_unison(a, b):
+#     c = numpy.concatenate((a,b), axis=1)
+#     numpy.random.shuffle(c)
+#     d = c[:,:a.shape[1]]
+#     e = c[:,a.shape[1]:]
+#     return d,e
+    
+
+
 def test_mlp(learning_rate=0.05, L1_reg=0.00, L2_reg=0.000, n_epochs=10,
-             dataset='', batch_size=10, n_hidden=[(392),(512)] ):
+             dataset='', batch_size=10, n_hidden=[(392),(392),(392),(392)] ):
     """
     Demonstrate stochastic gradient descent optimization for a multilayer
     perceptron
@@ -483,9 +494,14 @@ def test_mlp(learning_rate=0.05, L1_reg=0.00, L2_reg=0.000, n_epochs=10,
 
     while (epoch < n_epochs) and (not done_looping):
         epoch = epoch + 1
+
+        # Let's randomize the order of minibatches that will be used in training -Prasanna
+        random_order = numpy.random.permutation(n_train_batches)
+
+
         for minibatch_index in xrange(n_train_batches):
 
-            minibatch_avg_cost = train_model(minibatch_index)
+            minibatch_avg_cost = train_model(random_order[minibatch_index])
             # iteration number
             iter = (epoch - 1) * n_train_batches + minibatch_index
 
