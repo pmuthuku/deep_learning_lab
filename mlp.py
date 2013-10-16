@@ -440,6 +440,14 @@ def test_mlp(learning_rate=0.05, L1_reg=0.00, L2_reg=0.000, n_epochs=10,
                 x: valid_set_x[index * batch_size:(index + 1) * batch_size],
                 y: valid_set_y[index * batch_size:(index + 1) * batch_size]})
 
+
+    # Let's create another function to do the same on the training data
+    test_train_model = theano.function(inputs=[index],
+            outputs=classifier.errors(y),
+            givens={
+                x: train_set_x[index * batch_size:(index + 1) * batch_size],
+                y: train_set_y[index * batch_size:(index + 1) * batch_size]})
+
     # compute the gradient of cost with respect to theta (sotred in params)
     # the resulting gradients will be stored in a list gparams
     gparams = []
@@ -535,6 +543,15 @@ def test_mlp(learning_rate=0.05, L1_reg=0.00, L2_reg=0.000, n_epochs=10,
                           (epoch, minibatch_index + 1, n_train_batches,
                            test_score * 100.))
 
+            # Also test it on the training set for every minibatch -Prasanna
+            # test_training_losses = [test_train_model(i) for i
+            #                         in xrange(n_train_batches)]
+            # test_training_score = numpy.mean(test_training_losses)
+
+            # print ((' minibatch %i train error: %f %%') %
+            #        (minibatch_index + 1, test_training_score * 100.))
+    
+        
             if patience <= iter:
                     done_looping = True
                     break
