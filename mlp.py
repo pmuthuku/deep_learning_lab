@@ -362,7 +362,7 @@ def load_data():
 
 
 def test_mlp(learning_rate=0.05, L1_reg=0.00, L2_reg=0.000, n_epochs=10,
-             dataset='', batch_size=10, n_hidden=[(392)] ):
+             dataset='', batch_size=100, n_hidden=[(392),(50)] ):
     """
     Demonstrate stochastic gradient descent optimization for a multilayer
     perceptron
@@ -501,10 +501,10 @@ def test_mlp(learning_rate=0.05, L1_reg=0.00, L2_reg=0.000, n_epochs=10,
     done_looping = False
 
     # Let's open the files that keep track of all the numbers that Anders wants
-    s1 = 'traindata_error_minibatch'
-    s2 = 'traindata_error_epoch'
-    s3 = 'testdata_error_epoch'
-    s4 = 'training_time'
+    s1 = 'traindata_error_minibatch_exp3'
+    s2 = 'traindata_error_epoch_exp3'
+    s3 = 'testdata_error_epoch_exp3'
+    s4 = 'training_time_exp3'
 
     v1 = s1 +'_'+ str(len(n_hidden)) + '_' + str(batch_size)
     v2 = s2 +'_'+ str(len(n_hidden)) + '_' + str(batch_size)
