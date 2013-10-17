@@ -362,7 +362,7 @@ def load_data():
 
 
 def test_mlp(learning_rate=0.05, L1_reg=0.00, L2_reg=0.000, n_epochs=10,
-             dataset='', batch_size=10, n_hidden=[(392),(392),(392),(392)] ):
+             dataset='', batch_size=10, n_hidden=[(392)] ):
     """
     Demonstrate stochastic gradient descent optimization for a multilayer
     perceptron
@@ -500,6 +500,23 @@ def test_mlp(learning_rate=0.05, L1_reg=0.00, L2_reg=0.000, n_epochs=10,
     epoch = 0
     done_looping = False
 
+    # Let's open the files that keep track of all the numbers that Anders wants
+    s1 = 'traindata_error_minibatch'
+    s2 = 'traindata_error_epoch'
+    s3 = 'testdata_error_epoch'
+    s4 = 'training_time'
+
+    v1 = s1 +'_'+ str(len(n_hidden)) + '_' + str(batch_size)
+    v2 = s2 +'_'+ str(len(n_hidden)) + '_' + str(batch_size)
+    v3 = s3 +'_'+ str(len(n_hidden)) + '_' + str(batch_size)
+    v4 = s4 +'_'+ str(len(n_hidden)) + '_' + str(batch_size)
+
+    f1 = open(v1,'w')
+    f2 = open(v2,'w')
+    f3 = open(v3,'w')
+    f4 = open(v4,'w')
+    
+
     while (epoch < n_epochs) and (not done_looping):
         epoch = epoch + 1
 
@@ -546,14 +563,25 @@ def test_mlp(learning_rate=0.05, L1_reg=0.00, L2_reg=0.000, n_epochs=10,
             # Also test it on the training set for every minibatch -Prasanna
             test_training_losses = [test_train_model(random_order[minibatch_index])]
             test_training_score = numpy.mean(test_training_losses)
-
-            print ((' minibatch %i train error: %f %%') %
-                   (minibatch_index + 1, test_training_score * 100.))
-    
+            
+            f1.write(str(minibatch_index+1) + ' , ' + str(test_training_score*100)+ '\n')
+            # print ((' minibatch %i train error: %f %%') %
+            #        (minibatch_index + 1, test_training_score * 100.))    
         
             if patience <= iter:
                     done_looping = True
                     break
+
+        test_training_losses = [test_train_model(i) for i
+                                in xrange(n_train_batches)]
+        test_training_score = numpy.mean(test_training_losses)
+        f2.write(str(epoch) + ' , ' + str(test_training_score*100) + '\n')
+
+        test_losses = [test_model(i) for i
+                       in xrange(n_test_batches)]
+        test_score = numpy.mean(test_losses)
+        f3.write(str(epoch) + ' , ' + str(test_score*100) + '\n')
+
 
     end_time = time.clock()
     print(('Optimization complete. Best validation score of %f %% '
@@ -562,6 +590,13 @@ def test_mlp(learning_rate=0.05, L1_reg=0.00, L2_reg=0.000, n_epochs=10,
     print >> sys.stderr, ('The code for file ' +
                           os.path.split(__file__)[1] +
                           ' ran for %.2fm' % ((end_time - start_time) / 60.))
+
+    f4.write(str( ((end_time - start_time) / 60.) ) + '\n')
+
+    f1.close()
+    f2.close()
+    f3.close()
+    f4.close()
 
 
 if __name__ == '__main__':
