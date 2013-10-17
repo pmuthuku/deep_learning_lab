@@ -544,12 +544,11 @@ def test_mlp(learning_rate=0.05, L1_reg=0.00, L2_reg=0.000, n_epochs=10,
                            test_score * 100.))
 
             # Also test it on the training set for every minibatch -Prasanna
-            # test_training_losses = [test_train_model(i) for i
-            #                         in xrange(n_train_batches)]
-            # test_training_score = numpy.mean(test_training_losses)
+            test_training_losses = [test_train_model(random_order[minibatch_index])]
+            test_training_score = numpy.mean(test_training_losses)
 
-            # print ((' minibatch %i train error: %f %%') %
-            #        (minibatch_index + 1, test_training_score * 100.))
+            print ((' minibatch %i train error: %f %%') %
+                   (minibatch_index + 1, test_training_score * 100.))
     
         
             if patience <= iter:
